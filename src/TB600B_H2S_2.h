@@ -76,6 +76,7 @@ private:
 
     byte _buffer[13];
     size_t _bufferIndex = 0;
+    unsigned long _frameStartTime = 0;
 };
 
 #endif  // TB600B_H2S_2_H

@@ -230,12 +230,11 @@ TB600B_H2S_2_ResponseType TB600B_H2S_2::getGasTemperature(
     float *temperatureC,
     float *relativeHumidity
 ) {
-    static unsigned long frameStartTime = 0;
     const unsigned long frameTimeoutMs = 250;
     const size_t frameLength = 13;
 
     // Drop a partial frame that has been sitting too long.
-    if (_bufferIndex > 0 && millis() - frameStartTime > frameTimeoutMs) {
+    if (_bufferIndex > 0 && millis() - _frameStartTime > frameTimeoutMs) {
         _bufferIndex = 0;
     }
 
@@ -248,7 +247,7 @@ TB600B_H2S_2_ResponseType TB600B_H2S_2::getGasTemperature(
                 continue;
             }
 
-            frameStartTime = millis();
+            _frameStartTime = millis();
             _buffer[_bufferIndex++] = c;
             continue;
         }
@@ -258,7 +257,7 @@ TB600B_H2S_2_ResponseType TB600B_H2S_2::getGasTemperature(
         if (_bufferIndex == 1) {
             if (c != 0x87) {
                 if (c == 0xFF) {
-                    frameStartTime = millis();
+                    _frameStartTime = millis();
                     _buffer[0] = 0xFF;
                     _bufferIndex = 1;
                 } else {
